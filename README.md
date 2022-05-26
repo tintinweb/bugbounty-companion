@@ -12,7 +12,7 @@ A BugBounty companion script for [Immunefi](https://immunefi.com/explore/) 🙌 
 **TLDR;** clones **Immunefi** Repositories filtered by the highest rewards.
 
 <sup>
-⚠️ shell-executes stuff without checking! USE AT OWN RISK :D 
+⚠️ HACKY SCRIPT! - shell-executes stuff without checking! USE AT OWN RISK :D 
 </sup>
 
 ## Usage
@@ -46,6 +46,10 @@ $ bugbounty.py unique clone no-dryrun
 ```
 
 ### I don't know what to do?!
+
+<sup>
+⚠️ PSA: Reminder, this script is an ugly hack but it works :D USE AT OWN RISK. 
+</sup>
 
 ```
 $ bugbounty.py sync unique      # 1) download bounty info and cache it; filter unique repos
