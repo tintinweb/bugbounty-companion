@@ -5,11 +5,11 @@ Up your game by being more efficient than others! 🤓
 </sup>
 
 
-A BugBounty companion script for [Immunefi](https://immunefi.com/explore/) to checkout all high-reward bug bounty code-bases (use at own risk). 
+A BugBounty companion script for [Immunefi](https://immunefi.com/explore/) 🙌 Checkout high-reward yielding bug bounty projects and scale your bug bounty hunting.
 
 <br>
 
-* **TLDR;** clone all **Immunefi** Repositories filtered by the highest bugbounty payout amount.
+**TLDR;** clones **Immunefi** Repositories filtered by the highest rewards.
 
 <sup>
 ⚠️ shell-executes stuff without checking! USE AT OWN RISK :D 
