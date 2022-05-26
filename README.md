@@ -40,9 +40,17 @@ $ bugbounty.py unique
 $ bugbounty.py unique clone 
 ```
 
-* (actually) clone all unique repos
+* (actually) clone all unique repos 
 ```
 $ bugbounty.py unique clone no-dryrun
+```
+
+### I don't know what to do?!
+
+```
+$ bugbounty.py sync unique      # 1) download bounty info and cache it; filter unique repos
+$ bugbounty.py unique clone     # 2) dry-run clone - dblcheck if this is what you do
+$ bugbounty.py unique clone no-dryrun    # 3) actually checkout all the repos to $(pwd)/bugbounty_repos/<project>
 ```
             
 ## Cool, but when Lambo 🏎️?
