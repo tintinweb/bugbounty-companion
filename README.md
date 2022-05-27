@@ -61,7 +61,7 @@ $ bugbounty.py unique clone no-dryrun    # 3) actually checkout all the repos to
 
 * Check for similar issues in all code-bases
 * Run your tools, code-smell detectors
-  * e.g. [🐞 semgrep](https://semgrep.dev/)
+  * e.g. [semgrep](https://semgrep.dev/) - semgrep now supports solidity! write patterns, find bugs, at scale 
 * Submit Bugs for Bounties
 * 👉 Lambo 🏎️ $$ 🥳🥳
     
