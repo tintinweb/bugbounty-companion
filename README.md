@@ -61,12 +61,13 @@ $ bugbounty.py unique clone no-dryrun    # 3) actually checkout all the repos to
 
 * Check for similar issues in all code-bases
 * Run your tools, code-smell detectors
+  * e.g. [🐞 semgrep](https://semgrep.dev/)
 * Submit Bugs for Bounties
 * 👉 Lambo 🏎️ $$ 🥳🥳
     
 # Donate
 
-Got rich? Consider giving back by supporting the community ❤️ thanks 🙏 ([github/sponsor](https://github.com/sponsors/tintinweb))
+Got rich? Consider giving back by supporting the eth security community and [my projects](https://github.com/sponsors/tintinweb)  ❤️ 🙏
 
 <sup>
 Be a Hero, tip a 🍺 🙂 ⟶ Ƀ: 1AZMeGVfCBbYwVYyG9s79pJDyocTZgiApa | Ξth: 0x438B38E30eF117C15fBfF833f9C2c70182925815
