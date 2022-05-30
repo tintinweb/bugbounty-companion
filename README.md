@@ -5,15 +5,28 @@ Up your game by being more efficient than others! 🤓
 </sup>
 
 
-A BugBounty companion script for [Immunefi](https://immunefi.com/explore/) and [C4](https://code4rena.com/) 🙌 Checkout high-reward yielding bug bounty projects and scale your bug bounty hunting.
+Checkout high-reward yielding bug bounty projects, run your scripts to find bugs before others do, submit reports for bounties, win! Scale your bug bounty hunting efforts.
+
+The BugBounty companion is a script that lets you quickly check out source-code from bug bounty programs on various platforms. Currently supporting [Immunefi](https://immunefi.com/explore/) and [C4](https://code4rena.com/) 🙌 
 
 <br>
 
 **TLDR;** clones **Immunefi/C4** Repositories filtered by the highest rewards.
 
 <sup>
-⚠️ HACKY SCRIPT! - shell-executes stuff without checking! USE AT OWN RISK :D 
+⚠️ HACKY SCRIPT! - shell-executes stuff without checking! USE AT OWN RISK. dry-run first! 
 </sup>
+
+## Supported Platforms
+
+* [Immunefi](https://immunefi.com/explore/)
+
+<a href="https://immunefi.com/explore/"><img width="400" alt="image" src="https://user-images.githubusercontent.com/2865694/171031969-2e62159b-788d-4a9d-b240-af20982c0b09.png"></a>
+
+* [C4](https://code4rena.com/)
+
+<a href="https://code4rena.com/"><img width="400" alt="image" src="https://user-images.githubusercontent.com/2865694/171032003-99fc1ca6-e178-49be-8e69-008d2895a530.png"></a>
+
 
 ## Usage
 
