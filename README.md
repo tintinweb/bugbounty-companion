@@ -7,7 +7,7 @@ Up your game by being more efficient than others! 🤓
 
 Checkout high-reward yielding bug bounty projects, run your scripts to find bugs before others do, submit reports for bounties, win! Scale your bug bounty hunting efforts.
 
-The BugBounty companion is a script that lets you quickly check out source-code from bug bounty programs on various platforms. Currently supporting [Immunefi](https://immunefi.com/explore/) and [C4](https://code4rena.com/) 🙌 
+The BugBounty companion lets you quickly check out source-code from bug bounty programs from various platforms. Currently supporting [Immunefi](https://immunefi.com/explore/) and [C4](https://code4rena.com/) 🙌 
 
 <br>
 
