@@ -11,11 +11,11 @@ BugBounty Companion
         (a) sync with immunefi
             $ bugbounty.py sync
         (b) show unique repos
-            $ bugbounty.py unique
+            $ bugbounty.py unique [minReward=100000]
         (c) clone all repos (dryrun)
-            $ bugbounty.py unique clone 
+            $ bugbounty.py unique clone [minReward=100000]
         (d) clone all repos (actually do it)
-            $ bugbounty.py unique clone no-dryrun
+            $ bugbounty.py unique clone no-dryrun [minReward=100000]
 
 
         # NOTE: default output folder is $(pwd)/bugbounty_repos/<project>
@@ -26,34 +26,60 @@ BugBounty Companion
 Consider donating if you win a $mm 🥳
 """
 
+from lib2to3.pytree import Base
 import requests
 import re
 import json
 import os
 
+from datetime import datetime
+from decimal import Decimal
+
+
 
 ##### CONFIG THIS
-MAX_REWARD_CUTOFF = 100_000   # only check out projects with max bounty >= 100_000 $$ 
+MIN_REWARD_CUTOFF = 100_000   # only check out projects with max bounty >= 100_000 $$ 
 OUTPATH = os.path.abspath("./bugbounty_repos")   # abspath to main repo checkout dir
 ##### NO CHANGES BEYOND THIS LINE
 
 
-class ImmunefiCompanion(object):
-    REX_VALID_PROJECT = re.compile(r'[a-zA-Z0-9\_\-]+')
+class BaseCompanion(object):
+    REX_SUB_FOR_SHELL = re.compile(r'[^a-zA-Z0-9\_\-]')
+    REX_DUP_USCORE = re.compile(r'_+')
 
-    def __init__(self, repofile="immunefi_repos.json"):
+    def __init__(self, repofile):
         self.repofile = repofile
         self.data = []
 
     def loadRepo(self):
-        with open(self.repofile, 'r') as f:
-            self.data = json.load(f)
+        try:
+            with open(self.repofile, 'r') as f:
+                self.data = json.load(f)
+        except: pass
         return self
 
     def _saveRepo(self):
         with open(self.repofile, 'w') as f:
             f.write(json.dumps(self.data))
         return self
+
+    def gitClone(self, basedir, project, giturl):
+        project = self.REX_DUP_USCORE.sub("_", self.REX_SUB_FOR_SHELL.sub("_",project.lower()))
+        cmd = "mkdir -p %s/%s; cd %s/%s && git clone --depth=1 %s"%(basedir, project, basedir, project, giturl)
+        
+        if "no-dryrun" in sys.argv:
+            os.system(cmd)
+        print(cmd)
+
+    def getUniqeRepos(self, repos):
+        return sorted(set([ "/".join(r.split("/")[0:5]) for r in repos]))
+
+
+class ImmunefiCompanion(BaseCompanion):
+    
+
+    def __init__(self, repofile="immunefi_repos.json"):
+        super().__init__(repofile=repofile)
 
     def getRepos(self):
         all_projects = re.findall("href=\"/bounty/([^\"]+)\"", requests.get("https://immunefi.com/explore/?filter=immunefi").text)
@@ -130,54 +156,104 @@ class ImmunefiCompanion(object):
         self.data = results
         return self
 
-    def getUniqeRepos(self, repos):
-        return sorted(set([ "/".join(r.split("/")[0:5]) for r in repos]))
 
 
-    def gitClone(self, basedir, project, giturl):
-        assert(self.REX_VALID_PROJECT.match(project))
-        cmd = "mkdir -p %s/%s; cd %s/%s && git clone --depth=1 %s"%(basedir, project, basedir, project, giturl)
-        
-        if "no-dryrun" in sys.argv:
-            os.system(cmd)
-        print(cmd)
+class Code4renaCompanion(BaseCompanion):
+
+    def __init__(self, repofile="code4rena.json"):
+        super().__init__(repofile=repofile)
+
+    def _amountToDecimal(self, amount):
+        return int(Decimal(re.sub(r'[^\d.]', '', amount)))
+
+    def getRepos(self):
+        now = datetime.now()
+
+        cdata = requests.get("https://code4rena.com/page-data/index/page-data.json").json()["result"]["data"]["contests"]["edges"]
+        results = []
+
+        for contest in cdata:
+            c = contest["node"]
+            end_time = datetime.strptime(c["end_time"],'%Y-%m-%dT%H:%M:%S.%fZ')
+
+            if end_time <= now:
+                continue
+
+            c["max_reward"] = self._amountToDecimal(c["amount"])
+            c["repos"] = [c["repo"]]
+            c["name"] = c["title"]
+
+            results.append(c)
+
+        self.data = results
+        return self
+
+    
+def getMaxRewardCutoffFromArgs():
+    for a in sys.argv:
+        if a.startswith("minReward="):
+            return int(a[len("minReward="):])
+    return MIN_REWARD_CUTOFF
 
 if __name__ == "__main__":
     import sys
 
-    ic = ImmunefiCompanion()
+    programs = []
 
-    if "sync" in sys.argv:
-        bounties = ic.getRepos().data
-    else:
-        bounties = ic.loadRepo().data
+    if "immunefi" in sys.argv:
+        programs.append(ImmunefiCompanion())
+    if "code4rena" in sys.argv or "code4" in sys.argv or "c4" in sys.argv:
+        programs.append(Code4renaCompanion())
+
+    if not len(programs):
+        if "noask" not in sys.argv:
+            print("⚠️ You are about to run this script on ALL bug bounty platforms (currently: C4 AND Immunefi)!")
+            yno = input("Continue? [yN] (note: use cmdline arg 'noask' to skip )")
+            if yno != "y":
+                raise Exception("abort") 
+
+        programs = [Code4renaCompanion(), ImmunefiCompanion()]
+
+
+    arg_min_reward = getMaxRewardCutoffFromArgs()
     
-    num_repos = 0  
-    num_bounties_selected = 0 
-     
 
-    for bounty in reversed(sorted(bounties, key=lambda x: int(x['max_reward']))):
-        if int(bounty["max_reward"]) < MAX_REWARD_CUTOFF: continue
-        if not len(bounty["repos"]): continue
-        num_bounties_selected += 1
+    for ic in programs:
 
-        repos = bounty["repos"]
-        if "unique" in sys.argv:
-            repos = ic.getUniqeRepos(bounty["repos"])
+        if "sync" in sys.argv:
+            bounties = ic.getRepos().data
+            ic._saveRepo()
+        else:
+            bounties = ic.loadRepo().data
+            
+        
+        num_repos = 0  
+        num_bounties_selected = 0 
+        
+        for bounty in reversed(sorted(bounties, key=lambda x: int(x['max_reward']))):
+            if int(bounty["max_reward"]) < arg_min_reward: continue
+            if not len(bounty["repos"]): continue
+            num_bounties_selected += 1
 
-        num_repos += len(repos)
-        print("%-30s : $$ %-30s" % (bounty["name"], bounty["max_reward"]))
-        for k in repos:
-            if "#" in k: continue
-            print("   ➡️ %s"%k)
+            repos = bounty["repos"]
+            if "unique" in sys.argv:
+                repos = ic.getUniqeRepos(bounty["repos"])
 
-            if "clone" in sys.argv:
-                ic.gitClone(OUTPATH, bounty["name"], k) # TODO: maybe handle path exists; it will just error right now
+            num_repos += len(repos)
+            print("%-30s : $$ %-30s" % (bounty["name"], bounty["max_reward"]))
+            for k in repos:
+                if "#" in k: continue
+                print("   ➡️ %s"%k)
 
-    print("=============================")
-    print("total bounties: %d"%len(bounties))
-    print("")
-    print("min_reward: %d"%MAX_REWARD_CUTOFF)
-    print(" - selected bounties: %d"%num_bounties_selected)
-    print(" - selected repos: %d"%num_repos)
+                if "clone" in sys.argv:
+                    ic.gitClone(OUTPATH, bounty["name"], k) # TODO: maybe handle path exists; it will just error right now
+
+        print("=============================")
+        print(ic.__class__.__name__)
+        print("-----------------")
+        print("total bounties: %d"%len(bounties))
+        print("")
+        print("min_reward: %d"%arg_min_reward)
+        print(" - selected bounties: %d"%num_bounties_selected)
+        print(" - selected repos: %d"%num_repos)
     

@@ -5,11 +5,11 @@ Up your game by being more efficient than others! 🤓
 </sup>
 
 
-A BugBounty companion script for [Immunefi](https://immunefi.com/explore/) 🙌 Checkout high-reward yielding bug bounty projects and scale your bug bounty hunting.
+A BugBounty companion script for [Immunefi](https://immunefi.com/explore/) and [C4](https://code4rena.com/) 🙌 Checkout high-reward yielding bug bounty projects and scale your bug bounty hunting.
 
 <br>
 
-**TLDR;** clones **Immunefi** Repositories filtered by the highest rewards.
+**TLDR;** clones **Immunefi/C4** Repositories filtered by the highest rewards.
 
 <sup>
 ⚠️ HACKY SCRIPT! - shell-executes stuff without checking! USE AT OWN RISK :D 
@@ -18,12 +18,12 @@ A BugBounty companion script for [Immunefi](https://immunefi.com/explore/) 🙌 
 ## Usage
 
 ```
-$ bugbounty.py [sync|unique|clone|no-dryrun]
+$ bugbounty.py (code4rena|immunefi) [sync|unique|clone|no-dryrun|noask]
 ```
 
 **default output folder** is `$(pwd)/bugbounty_repos/<project>`
 
-## Examples
+### Examples
 
 * sync with immunefi website and dump results to json file
 ```
@@ -43,6 +43,109 @@ $ bugbounty.py unique clone
 * (actually) clone all unique repos 
 ```
 $ bugbounty.py unique clone no-dryrun
+```
+
+#### Demo
+
+
+```
+tintin@takeshii:~/workspace/solidity/bugbounty-companion|main⚡ 
+⇒  python3 bugbounty.py unique minReward=1000
+⚠️ You are about to run this script on ALL bug bounty platforms (currently: C4 AND Immunefi)!
+Continue? [yN]y
+1000
+OpenSea Seaport contest        : $$ 1000000                       
+   ➡️ https://github.com/code-423n4/2022-05-opensea-seaport
+Notional x Index Coop          : $$ 75000                         
+   ➡️ https://github.com/code-423n4/2022-06-notional-coop
+Backd Tokenomics contest       : $$ 75000                         
+   ➡️ https://github.com/code-423n4/2022-05-backd
+veToken Finance contest        : $$ 75000                         
+   ➡️ https://github.com/code-423n4/2022-05-vetoken
+Velodrome Finance contest      : $$ 75000                         
+   ➡️ https://github.com/code-423n4/2022-05-velodrome
+ChainSafe contest              : $$ 70000                         
+   ➡️ https://github.com/code-423n4/2022-05-chainsafe
+=============================
+total bounties: 6
+
+min_reward: 1000
+ - selected bounties: 6
+ - selected repos: 6
+wormhole/                      : $$ 10000000                      
+   ➡️ https://github.com/certusone/wormhole
+makerdao/                      : $$ 10000000                      
+   ➡️ https://github.com/dapphub/ds-weth
+   ➡️ https://github.com/makerdao/arbitrum-dai-bridge
+   ➡️ https://github.com/makerdao/clipper-mom
+   ➡️ https://github.com/makerdao/dss
+   ➡️ https://github.com/makerdao/dss-auto-line
+   ➡️ https://github.com/makerdao/dss-cdp-manager
+   ➡️ https://github.com/makerdao/dss-chain-log
+   ➡️ https://github.com/makerdao/dss-exec-lib
+   ➡️ https://github.com/makerdao/dss-gem-joins
+   ➡️ https://github.com/makerdao/dss-interfaces
+   ➡️ https://github.com/makerdao/dss-proxy-actions
+   ➡️ https://github.com/makerdao/dss-psm
+   ➡️ https://github.com/makerdao/dss-vest
+   ➡️ https://github.com/makerdao/esm
+   ➡️ https://github.com/makerdao/exchange-callees
+   ➡️ https://github.com/makerdao/ilk-registry
+   ➡️ https://github.com/makerdao/median
+   ➡️ https://github.com/makerdao/optimism-dai-bridge
+   ➡️ https://github.com/makerdao/osm
+aurora/                        : $$ 6000000                       
+   ➡️ https://github.com/aurora-is-near/aurora-engine
+   ➡️ https://github.com/aurora-is-near/near-erc20-connector
+   ➡️ https://github.com/aurora-is-near/rainbow-bridge
+   ➡️ https://github.com/aurora-is-near/rainbow-token-connector
+   ➡️ https://github.com/aurora-is-near/sputnikvm
+   ➡️ https://github.com/near-daos/sputnik-dao-contract
+chain/                         : $$ 5000000                       
+   ➡️ https://github.com/chain/chain-token
+   ➡️ https://github.com/chain/governance
+   ➡️ https://github.com/chain/staking
+gmx/                           : $$ 5000000                       
+   ➡️ https://github.com/gmx-io/gmx-contracts
+olympus/                       : $$ 3333333                       
+   ➡️ https://github.com/OlympusDAO/olympus-contracts
+thegraph/                      : $$ 2500000                       
+   ➡️ https://github.com/graphprotocol/agora
+   ➡️ https://github.com/graphprotocol/graph-node
+   ➡️ https://github.com/graphprotocol/indexer
+balancer/                      : $$ 2400000                       
+   ➡️ https://github.com/balancer-labs/balancer-v2-monorepo
+tribedao/                      : $$ 2200000                       
+   ➡️ https://github.com/Rari-Capital/compound-protocol
+   ➡️ https://github.com/fei-protocol/fei-protocol-core
+zksync/                        : $$ 2100000                       
+   ➡️ https://github.com/matter-labs/zksync
+optimism/                      : $$ 2000042                       
+   ➡️ https://github.com/ethereum-optimism/optimism
+   ➡️ https://github.com/ethereum/devp2p
+lidoonpolygon/                 : $$ 2000000                       
+   ➡️ https://github.com/Shard-Labs/PoLido
+zodiac/                        : $$ 2000000                       
+   ➡️ https://github.com/gnosis/zodiac
+multichain/                    : $$ 2000000                       
+   ➡️ https://github.com/anyswap/Anyswap-Audit
+celer/                         : $$ 2000000                       
+   ➡️ https://github.com/celer-network/sgn-v2-contracts
+polygon/                       : $$ 2000000                       
+   ➡️ https://github.com/fx-portal/contracts
+   ➡️ https://github.com/maticnetwork/contracts
+   ➡️ https://github.com/maticnetwork/genesis-contracts
+   ➡️ https://github.com/maticnetwork/pos-portal
+arbitrum/                      : $$ 2000000                       
+   ➡️ https://github.com/OffchainLabs/arb-os
+   ➡️ https://github.com/OffchainLabs/arbitrum
+...
+=============================
+total bounties: 288
+
+min_reward: 1000
+ - selected bounties: 214
+ - selected repos: 365
 ```
 
 ### I don't know what to do?!
