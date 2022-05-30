@@ -25,7 +25,12 @@ $ bugbounty.py (code4rena|immunefi) [sync|unique|clone|no-dryrun|noask]
 
 ### Examples
 
-* sync with immunefi website and dump results to json file
+* sync with c4 website and dump results to json file
+```
+$ bugbounty.py code4rena sync [unique]
+```
+
+* alternatively sync with all supported websites and dump results to json file
 ```
 $ bugbounty.py sync [unique]
 ```
@@ -35,14 +40,14 @@ $ bugbounty.py sync [unique]
 $ bugbounty.py unique
 ```
 
-* (dry-run) clone all unique repos
+* (dry-run) clone all unique repos (optionally only projects with >100_000 rewards)
 ```
-$ bugbounty.py unique clone 
+$ bugbounty.py unique clone [maxReward=100000]
 ```
 
-* (actually) clone all unique repos 
+* (actually) clone all unique repos (optionally only projects with >100_000 rewards)
 ```
-$ bugbounty.py unique clone no-dryrun
+$ bugbounty.py unique clone no-dryrun [maxReward=100000]
 ```
 
 #### Demo
