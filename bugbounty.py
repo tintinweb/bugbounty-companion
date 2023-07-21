@@ -26,13 +26,12 @@ BugBounty Companion
 Consider donating if you win a $mm 🥳
 """
 
-from lib2to3.pytree import Base
 import requests
 import re
 import json
 import os
 
-from datetime import datetime
+from datetime import datetime, timedelta
 from decimal import Decimal
 
 
@@ -157,7 +156,6 @@ class ImmunefiCompanion(BaseCompanion):
 
         results = list(reversed(sorted(results, key=lambda x: int(x['max_reward']))))
 
-        print(results)
         self.data = results
         return self
 
@@ -170,8 +168,36 @@ class Code4renaCompanion(BaseCompanion):
 
     def _amountToDecimal(self, amount):
         return int(Decimal(re.sub(r'[^\d.]', '', amount)))
-
+    
     def getRepos(self):
+        return self.getReposV1()
+    
+    def getReposV1(self):
+        now = datetime.now()
+
+        mydata = requests.get("https://code4rena.com/contests").text
+        idx_start = mydata.find('{\\"contests\\"')
+        idx_end = mydata.find('}]}]}]}]\\n"]',idx_start+1)
+ 
+        contests = json.loads(str.encode(mydata[idx_start:idx_end]).decode("unicode-escape")+ "}]}")['contests']
+
+        results = []
+        
+        for c in contests:
+            end_time = datetime.strptime(c["end_time"],'%Y-%m-%dT%H:%M:%S.%fZ')
+            if end_time <= now:
+                continue
+
+            c["max_reward"] = self._amountToDecimal(c["amount"])
+            c["repos"] = [c["repo"]]
+            c["name"] = c["title"]
+
+            results.append(c)
+
+        self.data = results
+        return self
+
+    def getReposV0(self):
         now = datetime.now()
 
         cdata = requests.get("https://code4rena.com/page-data/index/page-data.json").json()["result"]["data"]["contests"]["edges"]
@@ -200,6 +226,12 @@ def getMaxRewardCutoffFromArgs():
             return int(a[len("minReward="):])
     return MIN_REWARD_CUTOFF
 
+def getMaxAgeFromArgs():
+    for a in sys.argv:
+        if a.startswith("maxAge="):
+            return int(a[len("maxAge="):])
+    return None
+
 if __name__ == "__main__":
     import sys
 
@@ -207,7 +239,7 @@ if __name__ == "__main__":
 
     if "immunefi" in sys.argv:
         programs.append(ImmunefiCompanion())
-    if "code4rena" in sys.argv or "code4" in sys.argv or "c4" in sys.argv:
+    if "code4rena" in sys.argv or "codearena" in sys.argv or "code4" in sys.argv or "c4" in sys.argv:
         programs.append(Code4renaCompanion())
 
     if not len(programs):
@@ -221,10 +253,10 @@ if __name__ == "__main__":
 
 
     arg_min_reward = getMaxRewardCutoffFromArgs()
+    arg_max_age = getMaxAgeFromArgs()
     
 
     for ic in programs:
-
         if "sync" in sys.argv:
             bounties = ic.getRepos().data
             ic._saveRepo()
@@ -237,6 +269,8 @@ if __name__ == "__main__":
         
         for bounty in reversed(sorted(bounties, key=lambda x: int(x['max_reward']))):
             if int(bounty["max_reward"]) < arg_min_reward: continue
+            if arg_max_age and bounty.hasKey("start_time") and datetime.strptime(bounty["start_time"],'%Y-%m-%dT%H:%M:%S.%fZ') >= datetime.now()+timedelta(days=-arg_max_age): 
+                continue
             if not len(bounty["repos"]): continue
             num_bounties_selected += 1
 
