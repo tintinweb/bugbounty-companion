@@ -11,7 +11,7 @@ BugBounty Companion
         (a) sync with immunefi
             $ bugbounty.py sync
         (b) show unique repos
-            $ bugbounty.py unique [minReward=100000]
+            $ bugbounty.py unique [minReward=100000, maxReward=200000, maxAge=100, ignore=byteball,immunefi-team]
         (c) clone all repos (dryrun)
             $ bugbounty.py unique clone [minReward=100000]
         (d) clone all repos (actually do it)
@@ -220,16 +220,28 @@ class Code4renaCompanion(BaseCompanion):
         return self
 
     
-def getMaxRewardCutoffFromArgs():
+def getMinRewardCutoffFromArgs():
     for a in sys.argv:
         if a.startswith("minReward="):
             return int(a[len("minReward="):])
     return MIN_REWARD_CUTOFF
 
+def getMaxRewardCutoffFromArgs():
+    for a in sys.argv:
+        if a.startswith("maxReward="):
+            return int(a[len("maxReward="):])
+    return None
+
 def getMaxAgeFromArgs():
     for a in sys.argv:
         if a.startswith("maxAge="):
             return int(a[len("maxAge="):])
+    return None
+
+def getIgnoreFromArgs():
+    for a in sys.argv:
+        if a.startswith("ignore="):
+            return a[len("ignore="):].split(',')
     return None
 
 if __name__ == "__main__":
@@ -252,8 +264,10 @@ if __name__ == "__main__":
         programs = [Code4renaCompanion(), ImmunefiCompanion()]
 
 
-    arg_min_reward = getMaxRewardCutoffFromArgs()
+    arg_min_reward = getMinRewardCutoffFromArgs()
+    arg_max_reward = getMaxRewardCutoffFromArgs()
     arg_max_age = getMaxAgeFromArgs()
+    arg_ignore = getIgnoreFromArgs()
     
 
     for ic in programs:
@@ -268,8 +282,10 @@ if __name__ == "__main__":
         num_bounties_selected = 0 
         
         for bounty in reversed(sorted(bounties, key=lambda x: int(x['max_reward']))):
+            if arg_ignore and any(e.lower() in bounty["name"].lower() for e in arg_ignore): continue
             if int(bounty["max_reward"]) < arg_min_reward: continue
-            if arg_max_age and bounty.hasKey("start_time") and datetime.strptime(bounty["start_time"],'%Y-%m-%dT%H:%M:%S.%fZ') >= datetime.now()+timedelta(days=-arg_max_age): 
+            if arg_max_reward and int(bounty["max_reward"]) > arg_max_reward: continue
+            if arg_max_age and "start_time" in bounty and datetime.strptime(bounty["start_time"],'%Y-%m-%dT%H:%M:%S.%fZ') >= datetime.now()+timedelta(days=-arg_max_age): 
                 continue
             if not len(bounty["repos"]): continue
             num_bounties_selected += 1
