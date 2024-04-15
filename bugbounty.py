@@ -63,6 +63,7 @@ class BaseCompanion(object):
         return self
 
     def gitClone(self, basedir, project, giturl):
+        if("/tree/" in giturl or "/blob/" in giturl): return # skip single files
         project = self.REX_DUP_USCORE.sub("_", self.REX_SUB_FOR_SHELL.sub("_",project.lower()))
         cmd = "mkdir -p %s/%s; cd %s/%s && git clone --depth=1 %s"%(basedir, project, basedir, project, giturl)
         
@@ -294,7 +295,8 @@ if __name__ == "__main__":
 
             num_repos += len(repos)
             print("%-30s : $$ %-30s" % (bounty["name"], bounty["max_reward"]))
-            for k in repos:
+
+            for k in set(["/".join(r.split("/")[:5]) for r in repos]):
                 if "#" in k: continue
                 print("   ➡️ %s"%k)
 
