@@ -101,9 +101,8 @@ class ImmunefiCompanion(BaseCompanion):
 
             source = requests.get("https://immunefi.com/bounty/%s/"%p).text
             links = re.findall('id="__NEXT_DATA__" type="application/json">(.*)</script></body></html>', source)
-            pmeta['max_reward'] = int(re.findall(';maximum_reward=([0-9]+)', source)[0])
+            pmeta['max_reward'] = int(pstruct['maximum_reward'])
 
-            
             print("#",nr, p, "$$", pmeta["max_reward"])
             for f in links:
                 dataJson = json.loads(f)
@@ -175,12 +174,11 @@ class Code4renaCompanion(BaseCompanion):
     def getReposV1(self):
         now = datetime.now()
 
-        mydata = requests.get("https://code4rena.com/contests").text
-        idx_start = mydata.find('{\\"contests\\"')
-        idx_end = mydata.find('}]}]}]}]\\n"]',idx_start+1)
- 
-        contests = json.loads(str.encode(mydata[idx_start:idx_end]).decode("unicode-escape")+ "}]}")['contests']
-
+        mydata = requests.get("https://code4rena.com/audits").text
+        idx_start = mydata.find('\\"contests\\":[{\\') #"contests\":[{
+        #idx_end = mydata.find('}]}]}]}]\\n"]',idx_start+1)
+        idx_end = mydata.find(',\\"coreAppPage\\":', idx_start+1)
+        contests = json.loads( "{" + str.encode(mydata[idx_start:idx_end-1]).decode("unicode-escape"))['contests']
         results = []
         
         for c in contests:
